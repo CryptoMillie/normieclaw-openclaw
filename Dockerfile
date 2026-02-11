@@ -1,37 +1,37 @@
 FROM ghcr.io/openclaw/openclaw:main
 
-# Install jq for JSON manipulation
-RUN apk add --no-cache jq
-
 # Create entrypoint script that injects config at runtime
-RUN cat > /entrypoint.sh <<'EOF'
+RUN cat > /entrypoint.sh <<'SCRIPT'
 #!/bin/sh
 set -e
 
 # Create OpenClaw directory
 mkdir -p /root/.openclaw
 
-# Create openclaw.json with LAN binding
-cat > /root/.openclaw/openclaw.json <<CONFIG
+# Get PORT (Railway sets this dynamically)
+PORT_VALUE=${PORT:-18789}
+
+# Create openclaw.json with LAN binding (pure shell, no jq needed)
+cat > /root/.openclaw/openclaw.json <<EOF
 {
   "gateway": {
     "mode": "local",
     "bind": "lan",
-    "port": ${PORT:-18789},
+    "port": $PORT_VALUE,
     "auth": {
       "mode": "token",
       "token": "${OPENCLAW_GATEWAY_TOKEN}"
     }
   }
 }
-CONFIG
+EOF
 
-echo "✅ Config created:"
+echo "✅ OpenClaw config created:"
 cat /root/.openclaw/openclaw.json
 
 # Start OpenClaw gateway
 exec openclaw gateway
-EOF
+SCRIPT
 
 # Make entrypoint executable
 RUN chmod +x /entrypoint.sh
