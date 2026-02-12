@@ -4,27 +4,25 @@ USER root
 
 RUN cat > /usr/local/bin/openclaw-start <<'SCRIPT'
 #!/bin/sh
-set -e
 
-echo "=== DEBUG ==="
-echo "TOKEN=$OPENCLAW_GATEWAY_TOKEN"
-echo "PORT=$PORT"
+echo "=== ALL ENV VARS ==="
+env | sort
 
-# Find the openclaw binary wherever it lives
-OPENCLAW_BIN=$(which openclaw 2>/dev/null || find / -name "openclaw" -type f -perm /111 2>/dev/null | grep -v proc | head -1)
-echo "Binary: $OPENCLAW_BIN"
+echo "=== FINDING OPENCLAW ==="
+find / -name "openclaw*" 2>/dev/null | grep -v proc | grep -v sys
 
-if [ -z "$OPENCLAW_BIN" ]; then
-  echo "ERROR: openclaw binary not found"
-  exit 1
-fi
+echo "=== /app directory ==="
+ls -la /app 2>/dev/null || echo "no /app"
 
-if [ -z "$OPENCLAW_GATEWAY_TOKEN" ]; then
-  echo "ERROR: OPENCLAW_GATEWAY_TOKEN is empty"
-  exit 1
-fi
+echo "=== /usr/bin ==="
+ls /usr/bin | grep -i claw 2>/dev/null || echo "nothing"
 
-exec "$OPENCLAW_BIN" gateway --token "$OPENCLAW_GATEWAY_TOKEN"
+echo "=== PATH ==="
+echo $PATH
+
+echo "=== ORIGINAL ENTRYPOINT CHECK ==="
+cat /proc/1/cmdline 2>/dev/null | tr '\0' ' ' || echo "cant read"
+
 SCRIPT
 
 RUN chmod +x /usr/local/bin/openclaw-start
