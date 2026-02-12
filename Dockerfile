@@ -2,9 +2,8 @@ FROM ghcr.io/openclaw/openclaw:main
 
 USER root
 
-# Write base config at build time - Railway always uses PORT 8080
-# No chmod lock - OpenClaw needs to write its own auth token on first boot
-RUN mkdir -p /root/.openclaw && \
-    echo '{"gateway":{"bind":"lan","port":8080,"controlUi":{"enabled":true,"allowInsecureAuth":true}}}' > /root/.openclaw/openclaw.json
+# Install runtime entrypoint: writes openclaw.json from env vars, then starts gateway
+RUN echo "IyEvYmluL3NoCnNldCAtZQpleHBvcnQgUEFUSD0iL3Jvb3QvLmJ1bi9iaW46L2FwcC9ub2RlX21vZHVsZXMvLmJpbjovYXBwOiRQQVRIIgpUT0tFTj0iJHtPUEVOQ0xBV19HQVRFV0FZX1RPS0VOOi1ub3JtaWVjbGF3fSIKbWtkaXIgLXAgL3Jvb3QvLm9wZW5jbGF3CnByaW50ZiAie1wiZ2F0ZXdheVwiOntcImJpbmRcIjpcImxhblwiLFwicG9ydFwiOjgwODAsXCJjb250cm9sVWlcIjp7XCJlbmFibGVkXCI6dHJ1ZSxcImFsbG93SW5zZWN1cmVBdXRoXCI6dHJ1ZX0sXCJhdXRoXCI6e1wibW9kZVwiOlwidG9rZW5cIixcInRva2VuXCI6XCIlc1wifX19XG4iICIkVE9LRU4iID4gL3Jvb3QvLm9wZW5jbGF3L29wZW5jbGF3Lmpzb24KZWNobyAiW25vcm1pZWNsYXddIENvbmZpZyB3cml0dGVuLiBUb2tlbjogJFRPS0VOIgplY2hvICJbbm9ybWllY2xhd10gUEFUSDogJFBBVEgiCmV4ZWMgb3BlbmNsYXcgZ2F0ZXdheQo=" | base64 -d > /usr/local/bin/normieclaw-start && \
+    chmod +x /usr/local/bin/normieclaw-start
 
-# NO ENTRYPOINT OVERRIDE - original handles the binary
+ENTRYPOINT ["/usr/local/bin/normieclaw-start"]
