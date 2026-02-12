@@ -18,7 +18,7 @@ printf '{\n  "gateway": {\n    "mode": "local",\n    "bind": "lan",\n    "port":
 echo "✅ OpenClaw config written:"
 cat "$HOME/.openclaw/openclaw.json"
 
-exec openclaw gateway
+exec openclaw gateway --token "$TOKEN_VALUE"
 SCRIPT
 
 RUN chmod +x /usr/local/bin/openclaw-start
