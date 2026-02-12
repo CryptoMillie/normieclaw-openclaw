@@ -2,9 +2,9 @@ FROM ghcr.io/openclaw/openclaw:main
 
 USER root
 
-# Write config at build time - Railway always uses 8080
+# Write base config at build time - Railway always uses PORT 8080
+# No chmod lock - OpenClaw needs to write its own auth token on first boot
 RUN mkdir -p /root/.openclaw && \
-    echo '{"gateway":{"bind":"lan","port":8080,"controlUi":{"enabled":true,"allowInsecureAuth":true},"auth":{"mode":"token","token":"normieclaw2026"}}}' > /root/.openclaw/openclaw.json && \
-    chmod 444 /root/.openclaw/openclaw.json
+    echo '{"gateway":{"bind":"lan","port":8080,"controlUi":{"enabled":true,"allowInsecureAuth":true}}}' > /root/.openclaw/openclaw.json
 
 # NO ENTRYPOINT OVERRIDE - original handles the binary
