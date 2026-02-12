@@ -2,14 +2,6 @@ FROM ghcr.io/openclaw/openclaw:main
 
 USER root
 
-RUN cat > /usr/local/bin/openclaw-start <<'SCRIPT'
-#!/bin/sh
-mkdir -p /root/.openclaw
-printf '{"gateway":{"bind":"lan","port":%s}}' "${PORT:-18789}" > /root/.openclaw/openclaw.json
-echo "Starting on port ${PORT:-18789}"
-exec openclaw gateway
-SCRIPT
-
-RUN chmod +x /usr/local/bin/openclaw-start
+RUN echo "IyEvYmluL3NoCm1rZGlyIC1wIC9yb290Ly5vcGVuY2xhdwpwcmludGYgJ3siZ2F0ZXdheSI6eyJiaW5kIjoibGFuIiwicG9ydCI6JXN9fScgIiR7UE9SVDotMTg3ODl9IiA+IC9yb290Ly5vcGVuY2xhdy9vcGVuY2xhdy5qc29uCmVjaG8gIlN0YXJ0aW5nIG9uIHBvcnQgJHtQT1JUOi0xODc4OX0iCmV4ZWMgb3BlbmNsYXcgZ2F0ZXdheQo=" | base64 -d > /usr/local/bin/openclaw-start && chmod +x /usr/local/bin/openclaw-start
 
 ENTRYPOINT ["/usr/local/bin/openclaw-start"]
